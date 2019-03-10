@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Projet d\'Acquisition de Connaissances</string>
+    <string name="exit">Sortie</string>
+    <string name="doubleClickToExitMessage">Veuillez cliquer à nouveau sur RETOUR pour fermer l\'application.</string>
+</resources>

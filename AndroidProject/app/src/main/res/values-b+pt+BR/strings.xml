@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Projeto Ganhando Conhecimento</string>
+    <string name="exit">Sair</string>
+    <string name="doubleClickToExitMessage">Por favor clique VOLTAR novamente para sair do aplicativo</string>
+</resources>
