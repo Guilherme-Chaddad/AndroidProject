@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Project Gather Knowledge</string>
+    <string name="exit">Exit</string>
+    <string name="doubleClickToExitMessage">Please click BACK again to close the application</string>
+</resources>
