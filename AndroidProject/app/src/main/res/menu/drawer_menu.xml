@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/watch_resources_menu"
+          android:title="@string/watch_menu"
+          android:icon="@drawable/ic_watch_black" />
+
+    <item android:id="@+id/master_activities_menu"
+          android:title="@string/master_menu"
+          android:icon="@drawable/ic_extension_black" />
+
+</menu>

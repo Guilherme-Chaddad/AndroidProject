@@ -3,4 +3,7 @@
     <string name="app_name">Projet d\'Acquisition de Connaissances</string>
     <string name="exit">Sortie</string>
     <string name="doubleClickToExitMessage">Veuillez cliquer à nouveau sur RETOUR pour fermer l\'application.</string>
+    <string name="watch_menu">Smartwatch Fonctionnalité</string>
+    <string name="master_menu">Activités de maîtrise</string>
+    <string name="home">Home</string>
 </resources>
