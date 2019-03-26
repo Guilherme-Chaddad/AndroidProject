@@ -1,6 +1,6 @@
 package com.packingproblem.main
 
-class Bag (val items: IntArray, var fitness: Double, val totalWeight: Int, val factible : Boolean) {
+class Bag (val items: IntArray, var fitness: Double, var totalWeight: Int, var factible : Boolean) {
 	
 	constructor(items: IntArray, totalWeight: Int) : this(items, 0.0, totalWeight, totalWeight <= 120)
 	

@@ -9,9 +9,13 @@ fun main(args: Array<String>){
 	val populationSize: Int = 10
 	val reproductionSize: Int = populationSize
 	
+	BagUtil.listItems = listItems
+	
 	var initialPopulation: MutableSet<Bag> = initializePopulation(populationSize, listItems)
 	
-	calculateFitness(initialPopulation)
+	println("------------------------------------------------------")
+	//calculateFitnessPenalize(initialPopulation)
+	calculateFitnessRepair(initialPopulation)
 	
 	var numberOfReproduction = 0
 	while(numberOfReproduction < 500){
@@ -28,8 +32,27 @@ fun main(args: Array<String>){
 	}
 }
 
-fun calculateFitness(population: MutableSet<Bag>) {
-	
+fun calculateFitnessPenalize(population: MutableSet<Bag>) {
+	for(bag in population){
+		var fitness : Double = bag.totalWeight.div(120.0)
+		if(bag.factible) {
+			fitness = fitness * 10
+		}
+		bag.fitness = fitness
+		
+		println(bag)
+	}
+}
+
+fun calculateFitnessRepair(population: MutableSet<Bag>) {
+	for(bag in population){
+		if(bag.factible) {
+			BagUtil.repairBag(bag)
+		}
+		bag.fitness = bag.totalWeight.div(120.0) * 10
+		
+		println(bag)
+	}
 }
 
 fun initializePopulation(populationSize: Int, listItems: List<Item>): MutableSet<Bag> {
@@ -37,7 +60,7 @@ fun initializePopulation(populationSize: Int, listItems: List<Item>): MutableSet
 	val bagsPopulation : MutableSet<Bag> = mutableSetOf()
 	
 	while(bagsPopulation.size <= populationSize){
-		val bag = BagUtil.createAleatoryBag(listItems)
+		val bag = BagUtil.createAleatoryBag()
 		bagsPopulation.add(bag)
 		println(bag)
 	}
