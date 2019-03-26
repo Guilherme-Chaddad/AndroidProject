@@ -1,5 +1,7 @@
 package com.packingproblem.main
 
+import com.packingproblem.util.BagUtil
+
 fun main(args: Array<String>){
 	val listItems: List<Item> = initializeItems()
 	val probabilityCrossover: Double = 0.80
@@ -7,21 +9,39 @@ fun main(args: Array<String>){
 	val populationSize: Int = 10
 	val reproductionSize: Int = populationSize
 	
-	val initialPopulation: List<Bag> = initializePopulation(populationSize)
+	var initialPopulation: MutableSet<Bag> = initializePopulation(populationSize, listItems)
 	
-	//calcular fitness population
+	calculateFitness(initialPopulation)
 	
-	//selecionar cromossomos roleta
-	
-	//reprodução
-	
-	//repara/penaliza filhos e calcula fitness
-	
-	//seleciona populacao - repete de acordo com criterio de parada
+	var numberOfReproduction = 0
+	while(numberOfReproduction < 500){
+		
+		//selecionar cromossomos roleta
+		
+		//reprodução
+		
+		//repara/penaliza filhos e calcula fitness
+		
+		//seleciona populacao - repete de acordo com criterio de parada
+		
+		numberOfReproduction++;
+	}
 }
 
-fun initializePopulation(populationSize: Int): List<Bag> {
-	return listOf(Bag(null, 0.0, 0))
+fun calculateFitness(population: MutableSet<Bag>) {
+	
+}
+
+fun initializePopulation(populationSize: Int, listItems: List<Item>): MutableSet<Bag> {
+	
+	val bagsPopulation : MutableSet<Bag> = mutableSetOf()
+	
+	while(bagsPopulation.size <= populationSize){
+		val bag = BagUtil.createAleatoryBag(listItems)
+		bagsPopulation.add(bag)
+		println(bag)
+	}
+	return bagsPopulation
 }
 
 fun initializeItems(): List<Item> {
