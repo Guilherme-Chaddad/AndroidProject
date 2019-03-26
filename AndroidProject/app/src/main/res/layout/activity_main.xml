@@ -18,6 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimaryDark"
+                app:title="@string/home"
                 app:titleTextColor="@color/textColorPrimary"
                 android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 
