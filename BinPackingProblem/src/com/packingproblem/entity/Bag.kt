@@ -1,8 +1,10 @@
 package com.packingproblem.main
 
-class Bag (val items: IntArray, var fitness: Double, var totalWeight: Int, var factible : Boolean) {
+class Bag (val items: IntArray, var fitness: Double, var totalWeight: Int, var totalValue: Int,
+		   var factible : Boolean, var percentOfFitness: Long, var totalItems : Int) {
 	
-	constructor(items: IntArray, totalWeight: Int) : this(items, 0.0, totalWeight, totalWeight <= 120)
+	constructor(items: IntArray, totalWeight: Int, totalValue: Int, totalItems: Int) :
+			this(items, 0.0, totalWeight, totalValue, totalWeight <= 120, 0, totalItems)
 	
 	override fun equals(other: Any?) : Boolean {
 		if (this === other) return true
@@ -15,6 +17,6 @@ class Bag (val items: IntArray, var fitness: Double, var totalWeight: Int, var f
 	}
 	
 	override fun toString() : String{
-		return "Factible: $factible - Weight: $totalWeight - Fitness: $fitness - Items: "+items.joinToString()
+		return "Factible: $factible - Weight: $totalWeight - Value: $totalValue - Items: $totalItems - Fitness: $fitness - Percent of Fitness: $percentOfFitness Items: "+items.joinToString()
 	}
 }

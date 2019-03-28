@@ -1,25 +1,31 @@
 package com.packingproblem.util
 
 import com.packingproblem.main.Bag
-import com.packingproblem.main.Item
+import com.packingproblem.entity.Item
 
 class BagUtil {
 	companion object {
 		var listItems : List<Item> = listOf()
-		
+		private var weightTotal = 0
+		private var valueTotal = 0
+		private var totalItems = 0
 		fun createAleatoryBag() : Bag {
 			val arrayBag = createArrayBag()
-			val weightBag : Int = calcWeight(arrayBag)
-			return Bag(arrayBag, weightBag)
+			calcWeightValue(arrayBag)
+			return Bag(arrayBag, weightTotal, valueTotal, totalItems)
 		}
 		
-		private fun calcWeight(arrayBag: IntArray) : Int {
-			var weightTotal = 0
+		private fun calcWeightValue(arrayBag: IntArray) {
+			weightTotal = 0
+			valueTotal = 0
+			totalItems = 0
 			for(i in 0..41){
-				if(arrayBag[i] == 1)
-					weightTotal = weightTotal.plus(listItems.get(i).weight) 
+				if(arrayBag[i] == 1) {
+					weightTotal = weightTotal.plus(listItems.get(i).weight)
+					valueTotal = valueTotal.plus(listItems.get(i).value)
+					totalItems++
+				}
 			}
-			return weightTotal
 		}
 		
 		private fun createArrayBag(): IntArray {
@@ -36,10 +42,12 @@ class BagUtil {
 				
 				if(bag.items[itemPosition] == 1)
 					bag.items[itemPosition] = 0
-				
-				val weight = calcWeight(bag.items)
-				bag.totalWeight = weight
-				bag.factible = weight <= 120
+
+				calcWeightValue(bag.items)
+				bag.totalWeight = weightTotal
+				bag.totalValue = valueTotal
+				bag.totalItems = totalItems
+				bag.factible = weightTotal <= 120
 			}
 		}
 	}
