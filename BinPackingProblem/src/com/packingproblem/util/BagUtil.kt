@@ -9,12 +9,18 @@ class BagUtil {
 		private var weightTotal = 0
 		private var valueTotal = 0
 		private var totalItems = 0
+
 		fun createAleatoryBag(initialBagSize: Int) : Bag {
 			val arrayBag = createArrayBag(initialBagSize)
 			calcWeightValue(arrayBag)
 			return Bag(arrayBag, weightTotal, valueTotal, totalItems)
 		}
-		
+
+		fun createBag(arrayBag: IntArray) : Bag{
+			calcWeightValue(arrayBag)
+			return Bag(arrayBag, weightTotal, valueTotal, totalItems)
+		}
+
 		private fun calcWeightValue(arrayBag: IntArray) {
 			weightTotal = 0
 			valueTotal = 0
