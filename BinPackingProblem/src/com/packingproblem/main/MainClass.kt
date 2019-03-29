@@ -29,8 +29,12 @@ fun main(args: Array<String>){
 		//reprodução
 		val children : MutableList<Bag> = doReproduction(parents)
 		children.forEach(::println)
+
+		println("-----------------------FITNESS CHILDREN-------------------------------")
 		//repara/penaliza filhos e calcula fitness
-		
+		calculateFitnessPenalize(children)
+		//calculateFitnessRepair(population)
+
 		//seleciona populacao - repete de acordo com criterio de parada
 		
 		numberOfReproduction++;
@@ -46,29 +50,8 @@ fun doReproduction(parents: MutableList<Bag>) : MutableList<Bag> {
 		val parent1 = parents[i]
 		val parent2 = parents[i+1]
 
-		var arrayBagChild1 : IntArray = IntArray(42)
-		var arrayBagChild2 : IntArray = IntArray(42)
+		var (arrayBagChild1: IntArray, arrayBagChild2: IntArray) = doCrossover(parent1, parent2)
 
-		val aleatoryCrossover = (1..100).random()
-
-		if(aleatoryCrossover < probabilityCrossover) {
-
-
-			val pointOfCrossover = (0..41).random()
-
-			for(crossoverIndex in 0..pointOfCrossover) {
-				arrayBagChild1[crossoverIndex] = parent1.items[crossoverIndex]
-				arrayBagChild2[crossoverIndex] = parent2.items[crossoverIndex]
-			}
-
-			for(crossoverIndex in pointOfCrossover..41){
-				arrayBagChild1[crossoverIndex] = parent2.items[crossoverIndex]
-				arrayBagChild2[crossoverIndex] = parent1.items[crossoverIndex]
-			}
-		} else {
-			arrayBagChild1 = parent1.items
-			arrayBagChild2 = parent2.items
-		}
 		doMutation(arrayBagChild1)
 		doMutation(arrayBagChild2)
 
@@ -79,8 +62,42 @@ fun doReproduction(parents: MutableList<Bag>) : MutableList<Bag> {
 	return children
 }
 
-fun doMutation(arrayBag : IntArray) {
+fun doCrossover(parent1: Bag,parent2: Bag): Pair<IntArray, IntArray> {
+	var arrayBagChild1: IntArray = IntArray(42)
+	var arrayBagChild2: IntArray = IntArray(42)
 
+	val aleatoryCrossover = (1..100).random()
+
+	if (aleatoryCrossover < probabilityCrossover) {
+
+		val pointOfCrossover = (0..41).random()
+
+		for (crossoverIndex in 0..pointOfCrossover) {
+			arrayBagChild1[crossoverIndex] = parent1.items[crossoverIndex]
+			arrayBagChild2[crossoverIndex] = parent2.items[crossoverIndex]
+		}
+
+		for (crossoverIndex in pointOfCrossover..41) {
+			arrayBagChild1[crossoverIndex] = parent2.items[crossoverIndex]
+			arrayBagChild2[crossoverIndex] = parent1.items[crossoverIndex]
+		}
+	} else {
+		arrayBagChild1 = parent1.items
+		arrayBagChild2 = parent2.items
+	}
+	return Pair(arrayBagChild1, arrayBagChild2)
+}
+
+fun doMutation(arrayBag : IntArray) {
+	for(i in 0..41){
+		val aleatoryMutation = (1..100).random()
+		if(aleatoryMutation < probabilityMutation){
+			if(arrayBag[i] == 0)
+				arrayBag[i] = 1
+			else
+				arrayBag[i] = 0
+		}
+	}
 }
 
 fun selectParents(population: MutableList<Bag>) : MutableList<Bag> {
