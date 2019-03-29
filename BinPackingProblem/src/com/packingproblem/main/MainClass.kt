@@ -56,14 +56,14 @@ fun doReproduction(parents: MutableList<Bag>) : MutableList<Bag> {
 
 			val pointOfCrossover = (0..41).random()
 
-			for(i in 0..pointOfCrossover) {
-				arrayBagChild1[i] = parent1.items[i]
-				arrayBagChild2[i] = parent2.items[i]
+			for(crossoverIndex in 0..pointOfCrossover) {
+				arrayBagChild1[crossoverIndex] = parent1.items[crossoverIndex]
+				arrayBagChild2[crossoverIndex] = parent2.items[crossoverIndex]
 			}
 
-			for(j in pointOfCrossover..41){
-				arrayBagChild1[i] = parent2.items[i]
-				arrayBagChild2[i] = parent1.items[i]
+			for(crossoverIndex in pointOfCrossover..41){
+				arrayBagChild1[crossoverIndex] = parent2.items[crossoverIndex]
+				arrayBagChild2[crossoverIndex] = parent1.items[crossoverIndex]
 			}
 		} else {
 			arrayBagChild1 = parent1.items
