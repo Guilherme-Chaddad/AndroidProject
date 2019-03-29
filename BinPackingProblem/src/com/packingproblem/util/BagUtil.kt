@@ -9,8 +9,8 @@ class BagUtil {
 		private var weightTotal = 0
 		private var valueTotal = 0
 		private var totalItems = 0
-		fun createAleatoryBag() : Bag {
-			val arrayBag = createArrayBag()
+		fun createAleatoryBag(initialBagSize: Int) : Bag {
+			val arrayBag = createArrayBag(initialBagSize)
 			calcWeightValue(arrayBag)
 			return Bag(arrayBag, weightTotal, valueTotal, totalItems)
 		}
@@ -28,10 +28,21 @@ class BagUtil {
 			}
 		}
 		
-		private fun createArrayBag(): IntArray {
+		private fun createArrayBag(initialBagSize: Int): IntArray {
 			val arrayBag = IntArray(42)
-			for(i in 0..41){
-				arrayBag[i] = (0..1).random();
+			if(initialBagSize == 0) {
+				for (i in 0..41) {
+					arrayBag[i] = (0..1).random();
+				}
+			} else {
+				var i = 0
+				while (i < initialBagSize) {
+					val itemNumber = (0..41).random()
+					if(arrayBag[itemNumber] == 0) {
+						arrayBag[itemNumber] = 1
+						i++;
+					}
+				}
 			}
 			return arrayBag
 		}

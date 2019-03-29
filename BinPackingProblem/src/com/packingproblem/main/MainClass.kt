@@ -10,15 +10,16 @@ fun main(args: Array<String>){
 	val probabilityCrossover: Double = 0.80
 	val probabilityMutation: Double = 0.05
 	val populationSize: Int = 10
+	val initialBagSize: Int = 15
 	val reproductionSize: Int = populationSize
 	
 	BagUtil.listItems = listItems
 	
-	var population: MutableSet<Bag> = initializePopulation(populationSize)
+	var population: MutableSet<Bag> = initializePopulation(populationSize, initialBagSize)
 	
 	//println("------------------------------------------------------")
-	//calculateFitnessPenalize(population)
-	calculateFitnessRepair(population)
+	calculateFitnessPenalize(population)
+	//calculateFitnessRepair(population)
 	
 	var numberOfReproduction = 0
 	//while(numberOfReproduction < 500){
@@ -39,21 +40,31 @@ fun selectParents(population: MutableSet<Bag>) : MutableSet<Bag> {
 	val parents : MutableSet<Bag> = mutableSetOf()
 	
 	println(sumFitness)
-	population.forEach { bag -> bag.percentOfFitness = Math.round(bag.fitness.div(sumFitness) * 100) }
+
+	var totalPercOfFitness = 0.0
+	population.forEach { bag ->
+		val percFitnessTotal = bag.fitness.div(sumFitness) * 100
+		bag.percentOfFitness = Math.round(percFitnessTotal * 100) / 100.0 //Round to 2 decimals
+		totalPercOfFitness = totalPercOfFitness.plus(bag.percentOfFitness)
+	}
 	
 	println("--------------------------------------------")
 	
 	population.forEach {bag -> println(bag)}
+	println("Perc Total Fitness: $totalPercOfFitness")
 	return parents
 }
 
 fun calculateFitnessPenalize(population: MutableSet<Bag>) {
 	sumFitness = 0.0
 	for(bag in population){
-		var percentOfWeight : Double = bag.totalWeight.div(120.0)
-		var fitness = percentOfWeight
-		if(bag.factible) {
-			fitness = percentOfWeight * bag.totalValue
+		var fitness = bag.totalValue.toDouble()
+		if(!bag.factible) {
+			//penalize more bags with higher weights
+			var overweight = bag.totalWeight - 120.0
+			if(overweight == 1.0)
+				overweight = 1.5
+			fitness = bag.totalValue.div(overweight)
 		}
 		bag.fitness = Math.round(fitness*100) / 100.0
 		sumFitness = sumFitness.plus(bag.fitness)
@@ -67,23 +78,22 @@ fun calculateFitnessRepair(population: MutableSet<Bag>) {
 		if(!bag.factible) {
 			BagUtil.repairBag(bag)
 		}
-		//var fitness = bag.totalWeight + bag.totalValue
-		var fitness = bag.totalWeight.div(120.0) * bag.totalValue
-		bag.fitness = (Math.round(fitness*100.0) / 100.0) + bag.totalItems
+		bag.fitness = bag.totalValue.toDouble()
 		sumFitness = sumFitness.plus(bag.fitness)
 		println(bag)
 	}
 }
 
-fun initializePopulation(populationSize: Int): MutableSet<Bag> {
+fun initializePopulation(populationSize: Int, initialBagSize: Int): MutableSet<Bag> {
 	
 	val bagsPopulation : MutableSet<Bag> = mutableSetOf()
 	
 	while(bagsPopulation.size <= populationSize){
-		val bag = BagUtil.createAleatoryBag()
+		val bag = BagUtil.createAleatoryBag(initialBagSize)
 		bagsPopulation.add(bag)
 		println(bag)
 	}
+	println("-----------------------------------------------------")
 	return bagsPopulation
 }
 
