@@ -2,7 +2,6 @@ package com.packingproblem.main
 
 import com.packingproblem.entity.Item
 import com.packingproblem.util.BagUtil
-import kotlin.streams.toList
 
 var sumFitness = 0.0
 val probabilityCrossover: Double = 80.0
@@ -11,7 +10,9 @@ val populationSize: Int = 10
 val initialBagSize: Int = 0
 val reproductionSize: Int = populationSize
 val executionByGeneration = true
-val executionUsingPenalization = true
+val executionUsingPenalization = false
+val printInfo = false
+val printMapInfo = true
 
 fun main(args: Array<String>){
 	val listItems: List<Item> = initializeItems()
@@ -24,36 +25,54 @@ fun main(args: Array<String>){
 
 	var bestBag : Pair<Bag, Int>? = null
 	var stopCondition = 0
-	var execution = 0
+	var generation = 0
 	val limitGeneration = if(executionByGeneration) 500 else 500* populationSize
+	val mapFitness : MutableMap<Int, Pair<Double,Double>> = mutableMapOf()
+	includeFitnessInfoGeneration(generation, population, mapFitness)
 
 	while(stopCondition < limitGeneration){
-		execution++
-		println("-----------------------PARENTS SELECTED-------------------------------")
+		generation++
+		if(printInfo) println("-----------------------GENERATION $generation-------------------------------")
+		if(printInfo) println("-----------------------PARENTS SELECTED-------------------------------")
 		val parents : MutableList<Bag> = selectParents(population)
-		parents.forEach(::println)
+		if(printInfo) parents.forEach(::println)
 
-		println("-----------------------REPRODUCTION-------------------------------")
+		if(printInfo) println("-----------------------REPRODUCTION-------------------------------")
 		val children : MutableList<Bag> = doReproduction(parents)
-		children.forEach(::println)
+		if(printInfo) children.forEach(::println)
 
-		println("-----------------------FITNESS CHILDREN-------------------------------")
+		if(printInfo) println("-----------------------FITNESS CHILDREN-------------------------------")
 		//repair/penalize children and calculate fitness
 		if (executionUsingPenalization) calculateFitnessPenalize(children) else calculateFitnessRepair(children)
 
-		println("-----------------------BEST INDIVIDUALS SELECTED-------------------------------")
+		if(printInfo) println("-----------------------BEST INDIVIDUALS SELECTED-------------------------------")
 		//select best individuals
 		population = selectBestIndividuals(population, children)
-		population.forEach(::println)
+		if(printInfo) population.forEach(::println)
 
 		if (executionByGeneration) stopCondition++ else stopCondition+= reproductionSize
 
+		includeFitnessInfoGeneration(generation, population, mapFitness)
 		if(bestBag == null || bestBag.first.fitness < population.get(0).fitness){
-			bestBag = Pair(population.get(0), execution)
+			bestBag = Pair(population.get(0), generation)
 		}
 	}
 	println("-----------------------BEST INDIVIDUAL FOUND-------------------------------")
-	println("Execution: ${bestBag!!.second} - Bag: ${bestBag!!.first}")
+	println("Generation: ${bestBag!!.second} - Bag: ${bestBag!!.first}")
+	println(bestBag.second)
+	println(bestBag.first.fitness)
+	println(bestBag.first.totalItems)
+	println(bestBag.first.totalWeight)
+	println(bestBag.first.items.joinToString())
+	if(printMapInfo) println("----------------------- MAP FITNESS BY GENERATION -------------------------------")
+	if(printMapInfo) mapFitness.forEach { k, v -> println("$k,${v.first}")}
+}
+
+fun includeFitnessInfoGeneration(generation: Int, population: MutableList<Bag>, mapFitness : MutableMap<Int, Pair<Double, Double>>) {
+	val bestFitness = population.sortedWith(compareByDescending {it.fitness} ).get(0).fitness
+	val averageFitness = population.sumByDouble { bag -> bag.fitness } / population.size
+
+	mapFitness.put(generation, Pair(bestFitness, averageFitness))
 }
 
 fun selectBestIndividuals(parents: MutableList<Bag>, children: MutableList<Bag>) : MutableList<Bag> {
@@ -62,7 +81,7 @@ fun selectBestIndividuals(parents: MutableList<Bag>, children: MutableList<Bag>)
 	allIndividuals.addAll(parents)
 	allIndividuals.addAll(children)
 
-	allIndividuals = allIndividuals.sortedWith(compareByDescending({it.fitness})).toMutableList()
+	allIndividuals = allIndividuals.sortedWith(compareByDescending {it.fitness} ).toMutableList()
 	/*allIndividuals = allIndividuals
 							.stream()
 							.sorted(Comparator { bag1, bag2 -> bag2.fitness.compareTo(bag1.fitness)})
@@ -86,8 +105,8 @@ fun doReproduction(parents: MutableList<Bag>) : MutableList<Bag> {
 
 		var (arrayBagChild1: IntArray, arrayBagChild2: IntArray) = doCrossover(parent1, parent2)
 
-		doMutation(arrayBagChild1)
-		doMutation(arrayBagChild2)
+		arrayBagChild1 = doMutation(arrayBagChild1)
+		arrayBagChild2 = doMutation(arrayBagChild2)
 
 		children.add(BagUtil.createBag(arrayBagChild1))
 		children.add(BagUtil.createBag(arrayBagChild2))
@@ -111,7 +130,7 @@ fun doCrossover(parent1: Bag,parent2: Bag): Pair<IntArray, IntArray> {
 			arrayBagChild2[crossoverIndex] = parent2.items[crossoverIndex]
 		}
 
-		for (crossoverIndex in pointOfCrossover..41) {
+		for (crossoverIndex in pointOfCrossover+1..41) {
 			arrayBagChild1[crossoverIndex] = parent2.items[crossoverIndex]
 			arrayBagChild2[crossoverIndex] = parent1.items[crossoverIndex]
 		}
@@ -122,16 +141,20 @@ fun doCrossover(parent1: Bag,parent2: Bag): Pair<IntArray, IntArray> {
 	return Pair(arrayBagChild1, arrayBagChild2)
 }
 
-fun doMutation(arrayBag : IntArray) {
+fun doMutation(arrayBag : IntArray) : IntArray{
+	var arrayBagMutated = IntArray(arrayBag.size)
 	for(i in 0..41){
 		val aleatoryMutation = (1..100).random()
 		if(aleatoryMutation < probabilityMutation){
 			if(arrayBag[i] == 0)
-				arrayBag[i] = 1
+				arrayBagMutated[i] = 1
 			else
-				arrayBag[i] = 0
+				arrayBagMutated[i] = 0
+		} else {
+			arrayBagMutated[i] = arrayBag[i]
 		}
 	}
+	return arrayBagMutated
 }
 
 fun selectParents(population: MutableList<Bag>) : MutableList<Bag> {
@@ -139,7 +162,7 @@ fun selectParents(population: MutableList<Bag>) : MutableList<Bag> {
 
 	sumFitness = 0.0
 	population.forEach { sumFitness = sumFitness.plus(it.fitness) }
-	println("SUM FITNESS $sumFitness")
+	if(printInfo) println("SUM FITNESS $sumFitness")
 
 	//var totalPercOfFitness = 0.0
 	population.forEach {
@@ -166,7 +189,7 @@ fun selectParents(population: MutableList<Bag>) : MutableList<Bag> {
 
 fun calculateFitnessPenalize(population: MutableList<Bag>) {
 
-	println("-----------------------POPULATION AFTER PENALIZATION-------------------------------")
+	if(printInfo) println("-----------------------POPULATION AFTER PENALIZATION-------------------------------")
 	for(bag in population){
 		var fitness = bag.totalValue.toDouble()
 		if(!bag.factible) {
@@ -177,18 +200,18 @@ fun calculateFitnessPenalize(population: MutableList<Bag>) {
 			fitness = bag.totalValue.div(overweight)
 		}
 		bag.fitness = Math.round(fitness*10000) / 10000.0
-		println(bag)
+		if(printInfo) println(bag)
 	}
 }
 
 fun calculateFitnessRepair(population: MutableList<Bag>) {
-	println("-----------------------POPULATION AFTER REPAIR-------------------------------")
+	if(printInfo) println("-----------------------POPULATION AFTER REPAIR-------------------------------")
 	for(bag in population){
 		if(!bag.factible) {
 			BagUtil.repairBag(bag)
 		}
 		bag.fitness = bag.totalValue.toDouble()
-		println(bag)
+		if(printInfo) println(bag)
 	}
 }
 
@@ -196,11 +219,11 @@ fun initializePopulation(): MutableList<Bag> {
 	
 	val bagsPopulation : MutableList<Bag> = mutableListOf()
 
-	println("-----------------------INITIAL POPULATION-------------------------------")
+	if(printInfo) println("-----------------------INITIAL POPULATION-------------------------------")
 	while(bagsPopulation.size < populationSize){
 		val bag = BagUtil.createAleatoryBag(initialBagSize)
 		bagsPopulation.add(bag)
-		println(bag)
+		if(printInfo) println(bag)
 	}
 	return bagsPopulation
 }
