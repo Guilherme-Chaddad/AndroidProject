@@ -2,13 +2,16 @@ package com.packingproblem.main
 
 import com.packingproblem.entity.Item
 import com.packingproblem.util.BagUtil
+import kotlin.streams.toList
 
 var sumFitness = 0.0
 val probabilityCrossover: Double = 80.0
 val probabilityMutation: Double = 5.0
 val populationSize: Int = 10
-val initialBagSize: Int = 15
+val initialBagSize: Int = 0
 val reproductionSize: Int = populationSize
+val executionByGeneration = true
+val executionUsingPenalization = true
 
 fun main(args: Array<String>){
 	val listItems: List<Item> = initializeItems()
@@ -17,28 +20,59 @@ fun main(args: Array<String>){
 	
 	var population: MutableList<Bag> = initializePopulation()
 
-	calculateFitnessPenalize(population)
-	//calculateFitnessRepair(population)
+	if (executionUsingPenalization) calculateFitnessPenalize(population) else calculateFitnessRepair(population)
 
-	var numberOfReproduction = 0
-	//while(numberOfReproduction < 500){
+	var bestBag : Pair<Bag, Int>? = null
+	var stopCondition = 0
+	var execution = 0
+	val limitGeneration = if(executionByGeneration) 500 else 500* populationSize
+
+	while(stopCondition < limitGeneration){
+		execution++
+		println("-----------------------PARENTS SELECTED-------------------------------")
 		val parents : MutableList<Bag> = selectParents(population)
 		parents.forEach(::println)
 
 		println("-----------------------REPRODUCTION-------------------------------")
-		//reprodução
 		val children : MutableList<Bag> = doReproduction(parents)
 		children.forEach(::println)
 
 		println("-----------------------FITNESS CHILDREN-------------------------------")
-		//repara/penaliza filhos e calcula fitness
-		calculateFitnessPenalize(children)
-		//calculateFitnessRepair(population)
+		//repair/penalize children and calculate fitness
+		if (executionUsingPenalization) calculateFitnessPenalize(children) else calculateFitnessRepair(children)
 
-		//seleciona populacao - repete de acordo com criterio de parada
-		
-		numberOfReproduction++;
-	//}
+		println("-----------------------BEST INDIVIDUALS SELECTED-------------------------------")
+		//select best individuals
+		population = selectBestIndividuals(population, children)
+		population.forEach(::println)
+
+		if (executionByGeneration) stopCondition++ else stopCondition+= reproductionSize
+
+		if(bestBag == null || bestBag.first.fitness < population.get(0).fitness){
+			bestBag = Pair(population.get(0), execution)
+		}
+	}
+	println("-----------------------BEST INDIVIDUAL FOUND-------------------------------")
+	println("Execution: ${bestBag!!.second} - Bag: ${bestBag!!.first}")
+}
+
+fun selectBestIndividuals(parents: MutableList<Bag>, children: MutableList<Bag>) : MutableList<Bag> {
+
+	var allIndividuals: MutableList<Bag> = mutableListOf()
+	allIndividuals.addAll(parents)
+	allIndividuals.addAll(children)
+
+	allIndividuals = allIndividuals.sortedWith(compareByDescending({it.fitness})).toMutableList()
+	/*allIndividuals = allIndividuals
+							.stream()
+							.sorted(Comparator { bag1, bag2 -> bag2.fitness.compareTo(bag1.fitness)})
+							.toList()
+							.toMutableList()*/
+
+	/*println("-----------------------ORDERED ELEMENTS-------------------------------")
+	allIndividuals.forEach(::println)*/
+
+	return allIndividuals.take(populationSize).toMutableList()
 }
 
 fun doReproduction(parents: MutableList<Bag>) : MutableList<Bag> {
@@ -102,34 +136,37 @@ fun doMutation(arrayBag : IntArray) {
 
 fun selectParents(population: MutableList<Bag>) : MutableList<Bag> {
 	val parents : MutableList<Bag> = mutableListOf()
-	
-	println(sumFitness)
+
+	sumFitness = 0.0
+	population.forEach { sumFitness = sumFitness.plus(it.fitness) }
+	println("SUM FITNESS $sumFitness")
 
 	//var totalPercOfFitness = 0.0
 	population.forEach {
 		val percFitnessTotal = it.fitness.div(sumFitness) * 100
-		it.percentOfFitness = Math.round(percFitnessTotal * 100) / 100.0 //Round to 2 decimals
+		it.percentOfFitness = Math.round(percFitnessTotal * 100000) / 100000.0 //Round to 5 decimals
 		//totalPercOfFitness = totalPercOfFitness.plus(bag.percentOfFitness)
 	}
-	println("------------------------------------------------------")
-	population.forEach(::println)
-	println("-----------------------PARENTS SELECTED-------------------------------")
+
 	for(i in 1..reproductionSize) {
 		val aleatoryPerc = (1..100).random().toDouble()
 		var sumPercFitness = 0.0
+		var j = 0
 		for( bag in population) {
 			sumPercFitness = sumPercFitness.plus(bag.percentOfFitness)
-			if(sumPercFitness >= aleatoryPerc) {
+			if(sumPercFitness >= aleatoryPerc || j == population.lastIndex) {
 				parents.add(bag)
 				break
 			}
+			j++
 		}
 	}
 	return parents
 }
 
 fun calculateFitnessPenalize(population: MutableList<Bag>) {
-	sumFitness = 0.0
+
+	println("-----------------------POPULATION AFTER PENALIZATION-------------------------------")
 	for(bag in population){
 		var fitness = bag.totalValue.toDouble()
 		if(!bag.factible) {
@@ -139,20 +176,18 @@ fun calculateFitnessPenalize(population: MutableList<Bag>) {
 				overweight = 1.5
 			fitness = bag.totalValue.div(overweight)
 		}
-		bag.fitness = Math.round(fitness*100) / 100.0
-		sumFitness = sumFitness.plus(bag.fitness)
+		bag.fitness = Math.round(fitness*10000) / 10000.0
 		println(bag)
 	}
 }
 
 fun calculateFitnessRepair(population: MutableList<Bag>) {
-	sumFitness = 0.0
+	println("-----------------------POPULATION AFTER REPAIR-------------------------------")
 	for(bag in population){
 		if(!bag.factible) {
 			BagUtil.repairBag(bag)
 		}
 		bag.fitness = bag.totalValue.toDouble()
-		sumFitness = sumFitness.plus(bag.fitness)
 		println(bag)
 	}
 }
@@ -160,13 +195,13 @@ fun calculateFitnessRepair(population: MutableList<Bag>) {
 fun initializePopulation(): MutableList<Bag> {
 	
 	val bagsPopulation : MutableList<Bag> = mutableListOf()
-	
+
+	println("-----------------------INITIAL POPULATION-------------------------------")
 	while(bagsPopulation.size < populationSize){
 		val bag = BagUtil.createAleatoryBag(initialBagSize)
 		bagsPopulation.add(bag)
 		println(bag)
 	}
-	println("-----------------------------------------------------")
 	return bagsPopulation
 }
 
