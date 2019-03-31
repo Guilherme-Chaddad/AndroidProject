@@ -4,15 +4,15 @@ import com.packingproblem.entity.Item
 import com.packingproblem.util.BagUtil
 
 var sumFitness = 0.0
-val probabilityCrossover: Double = 80.0
-val probabilityMutation: Double = 5.0
-val populationSize: Int = 10
-val initialBagSize: Int = 0
-val reproductionSize: Int = populationSize
-val executionByGeneration = true
-val executionUsingPenalization = false
-val printInfo = false
-val printMapInfo = true
+const val probabilityCrossover: Double = 80.0
+const val probabilityMutation: Double = 5.0
+const val populationSize: Int = 10
+const val initialBagSize: Int = 0
+const val reproductionSize: Int = populationSize
+const val executionByGeneration = true
+const val executionUsingPenalization = false
+const val printInfo = false
+const val printMapInfo = true
 
 fun main(args: Array<String>){
 	val listItems: List<Item> = initializeItems()
