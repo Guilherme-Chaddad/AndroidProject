@@ -1,0 +1,55 @@
+
+FUNCTION_BLOCK Negotiation
+
+VAR_INPUT	
+	price : REAL;		
+	urgency : REAL;
+END_VAR
+
+VAR_OUTPUT				
+	reduction : REAL;
+END_VAR
+
+
+FUZZIFY price
+TERM baixo := (300.0, 1.0) (450.0, 0.0) ; 
+TERM medio := (300.0, 0.0) (450.0, 1.0) (600.0, 0.0);
+TERM alto := (450.0, 0.0) (600.0, 1.0);
+
+END_FUZZIFY
+FUZZIFY urgency
+TERM baixo := (0.0, 1.0) (0.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (0.5, 1.0) (1.0, 0.0);
+TERM alto := (0.5, 0.0) (1.0, 1.0);
+END_FUZZIFY
+
+DEFUZZIFY reduction
+	TERM muito_baixo := (0.0, 1.0) (1.5, 0.0) ; 
+	TERM baixo := (0.5, 0.0) (1.5, 1.0) (2.5, 0.0);
+	TERM moderado := (1.5, 0.0) (2.5, 1.0) (4.0, 0.0) ; 
+	TERM alto := (2.5, 0.0) (4.0, 1.0) (5.0, 0.0);
+	TERM muito_alto := (4.0, 0.0) (5.0, 1.0);
+	METHOD : COG;		
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+
+RULE 1 : IF urgency IS baixo AND price IS baixo THEN reduction IS muito_baixo;
+RULE 2 : IF urgency IS baixo AND price IS medio THEN reduction IS baixo;
+RULE 3 : IF urgency IS baixo AND price IS alto THEN reduction IS baixo;
+RULE 4 : IF urgency IS medio AND price IS baixo THEN reduction IS baixo;
+RULE 5 : IF urgency IS medio AND price IS medio THEN reduction IS moderado;
+RULE 6 : IF urgency IS medio AND price IS alto THEN reduction IS alto;
+RULE 7 : IF urgency IS alto AND price IS baixo THEN reduction IS moderado;
+RULE 8 : IF urgency IS alto AND price IS medio THEN reduction IS alto;
+RULE 9 : IF urgency IS alto AND price IS alto THEN reduction IS muito_alto;
+
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,82 @@
+
+FUNCTION_BLOCK Notas
+
+VAR_INPUT			
+	Variance : REAL;
+	Skewness : REAL;
+	Curtosis : REAL;
+	Entropy : REAL;
+END_VAR
+
+VAR_OUTPUT				
+	nota : REAL;
+END_VAR
+
+FUZZIFY Variance
+TERM baixo := (-8.0, 1.0) (-4.0, 1.0) (-1.0, 0.0) ; 
+TERM medio := (-2.0, 0.0) (0.0, 1.0) (1.5, 0.0);
+TERM alto := (1.0, 0.0) (3.0, 1.0) (8.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY Skewness
+TERM baixo := (-15.0, 1.0) (-8.0, 1.0) (-3.0, 0.0);
+TERM medio := (-5.0, 0.0) (0.0, 1.0) (5.0, 0.0);
+TERM alto := (3.0, 0.0) (8.0, 1.0) (15.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY Curtosis
+TERM baixo := (-6.0, 1.0) (1.0, 1.0) (2.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (4.0, 1.0) (7.0, 0.0);
+TERM alto := (5.0, 0.0) (8.0, 1.0) (20.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY Entropy
+TERM baixo := (-9.0, 1.0) (-4.0, 1.0) (-2.0, 0.0); 
+TERM medio := (-3.0, 0.0) (0.0, 1.0) (3.0, 1.0);
+END_FUZZIFY
+
+DEFUZZIFY nota
+	TERM autentica := (0,1) (0.50,0);
+	TERM falsa := (0.50,0) (1,1);
+	METHOD : COG;		
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+
+RULE 1 : IF Variance IS baixo AND Skewness IS baixo AND Curtosis IS baixo THEN nota IS falsa;
+RULE 2 : IF Variance IS baixo AND Skewness IS baixo AND Curtosis IS medio THEN nota IS falsa;
+RULE 3 : IF Variance IS baixo AND Skewness IS baixo AND Curtosis IS alto THEN nota IS falsa;
+RULE 4 : IF Variance IS baixo AND Skewness IS medio AND Curtosis IS baixo THEN nota IS falsa;
+RULE 5 : IF Variance IS baixo AND Skewness IS medio AND Curtosis IS medio THEN nota IS falsa;
+RULE 6 : IF Variance IS baixo AND Skewness IS medio AND Curtosis IS alto THEN nota IS falsa;
+RULE 7 : IF Variance IS baixo AND Skewness IS alto AND Curtosis IS baixo THEN nota IS falsa;
+RULE 8 : IF Variance IS baixo AND Skewness IS alto AND Curtosis IS medio THEN nota IS falsa;
+RULE 9 : IF Variance IS baixo AND Skewness IS alto AND Curtosis IS alto THEN nota IS falsa;
+RULE 10 : IF Variance IS medio AND Skewness IS baixo AND Curtosis IS baixo THEN nota IS falsa;
+RULE 11 : IF Variance IS medio AND Skewness IS baixo AND Curtosis IS medio THEN nota IS falsa;
+RULE 12 : IF Variance IS medio AND Skewness IS baixo AND Curtosis IS alto THEN nota IS falsa;
+RULE 13 : IF Variance IS medio AND Skewness IS medio AND Curtosis IS baixo THEN nota IS autentica;
+RULE 14 : IF Variance IS medio AND Skewness IS medio AND Curtosis IS medio THEN nota IS falsa;
+RULE 15 : IF Variance IS medio AND Skewness IS medio AND Curtosis IS alto THEN nota IS falsa;
+RULE 16 : IF Variance IS medio AND Skewness IS alto AND Curtosis IS baixo THEN nota IS autentica;
+RULE 17 : IF Variance IS medio AND Skewness IS alto AND Curtosis IS medio THEN nota IS autentica;
+RULE 18 : IF Variance IS medio AND Skewness IS alto AND Curtosis IS alto THEN nota IS falsa;
+RULE 19 : IF Variance IS alto AND Skewness IS baixo AND Curtosis IS baixo THEN nota IS autentica;
+RULE 20 : IF Variance IS alto AND Skewness IS baixo AND Curtosis IS medio THEN nota IS autentica;
+RULE 21 : IF Variance IS alto AND Skewness IS baixo AND Curtosis IS alto THEN nota IS autentica;
+RULE 22 : IF Variance IS alto AND Skewness IS medio AND Curtosis IS baixo THEN nota IS autentica;
+RULE 23 : IF Variance IS alto AND Skewness IS medio AND Curtosis IS medio THEN nota IS autentica;
+RULE 24 : IF Variance IS alto AND Skewness IS medio AND Curtosis IS alto THEN nota IS autentica;
+RULE 25 : IF Variance IS alto AND Skewness IS alto AND Curtosis IS baixo THEN nota IS autentica;
+RULE 26 : IF Variance IS alto AND Skewness IS alto AND Curtosis IS medio THEN nota IS autentica;
+RULE 27 : IF Variance IS alto AND Skewness IS alto AND Curtosis IS alto THEN nota IS autentica;
+
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+

@@ -1,0 +1,140 @@
+
+FUNCTION_BLOCK Negotiation
+
+VAR_INPUT			
+	utility : REAL;
+	price : REAL;
+	urgency : REAL;
+	time : REAL;
+END_VAR
+
+VAR_OUTPUT				
+	increment : REAL;
+END_VAR
+
+FUZZIFY utility
+TERM baixo := (0.0, 1.0) (0.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (0.5, 1.0) (1.0, 0.0);
+TERM alto := (0.5, 0.0) (1.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY price
+TERM baixo := (3000.0, 1.0) (3500.0, 0.0) ; 
+TERM medio := (3000.0, 0.0) (3500.0, 1.0) (4000.0, 0.0);
+TERM alto := (3500.0, 0.0) (4000.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY urgency
+TERM baixo := (0.0, 1.0) (0.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (0.5, 1.0) (1.0, 0.0);
+TERM alto := (0.5, 0.0) (1.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY time
+TERM baixo := (0, 1.0) (5, 0.0) ; 
+TERM medio := (0, 0.0) (5, 1.0) (10, 0.0);
+TERM alto := (5, 0.0) (10, 1.0);
+END_FUZZIFY
+
+DEFUZZIFY increment
+	TERM muito_baixo := (0.0, 1.0) (1.5, 0.0) ; 
+	TERM baixo := (0.5, 0.0) (1.5, 1.0) (2.5, 0.0);
+	TERM moderado := (1.5, 0.0) (2.5, 1.0) (4.0, 0.0) ; 
+	TERM alto := (2.5, 0.0) (4.0, 1.0) (5.0, 0.0);
+	TERM muito_alto := (4.0, 0.0) (5.0, 1.0);
+	METHOD : COG;		
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+
+RULE 1 : IF utility IS baixo AND price IS baixo AND urgency IS baixo AND time IS baixo THEN increment IS moderado;
+RULE 2 : IF utility IS baixo AND price IS baixo AND urgency IS baixo AND time IS medio THEN increment IS baixo;
+RULE 3 : IF utility IS baixo AND price IS baixo AND urgency IS baixo AND time IS alto THEN increment IS muito_baixo;
+RULE 4 : IF utility IS baixo AND price IS baixo AND urgency IS medio AND time IS baixo THEN increment IS moderado;
+RULE 5 : IF utility IS baixo AND price IS baixo AND urgency IS medio AND time IS medio THEN increment IS baixo;
+RULE 6 : IF utility IS baixo AND price IS baixo AND urgency IS medio AND time IS alto THEN increment IS baixo;
+RULE 7 : IF utility IS baixo AND price IS baixo AND urgency IS alto AND time IS baixo THEN increment IS alto;
+RULE 8 : IF utility IS baixo AND price IS baixo AND urgency IS alto AND time IS medio THEN increment IS moderado;
+RULE 9 : IF utility IS baixo AND price IS baixo AND urgency IS alto AND time IS alto THEN increment IS moderado;
+RULE 10 : IF utility IS baixo AND price IS medio AND urgency IS baixo AND time IS baixo THEN increment IS moderado;
+RULE 11 : IF utility IS baixo AND price IS medio AND urgency IS baixo AND time IS medio THEN increment IS baixo;
+RULE 12 : IF utility IS baixo AND price IS medio AND urgency IS baixo AND time IS alto THEN increment IS muito_baixo;
+RULE 13 : IF utility IS baixo AND price IS medio AND urgency IS medio AND time IS baixo THEN increment IS moderado;
+RULE 14 : IF utility IS baixo AND price IS medio AND urgency IS medio AND time IS medio THEN increment IS baixo;
+RULE 15 : IF utility IS baixo AND price IS medio AND urgency IS medio AND time IS alto THEN increment IS baixo;
+RULE 16 : IF utility IS baixo AND price IS medio AND urgency IS alto AND time IS baixo THEN increment IS alto;
+RULE 17 : IF utility IS baixo AND price IS medio AND urgency IS alto AND time IS medio THEN increment IS alto;
+RULE 18 : IF utility IS baixo AND price IS medio AND urgency IS alto AND time IS alto THEN increment IS moderado;
+RULE 19 : IF utility IS baixo AND price IS alto AND urgency IS baixo AND time IS baixo THEN increment IS alto;
+RULE 20 : IF utility IS baixo AND price IS alto AND urgency IS baixo AND time IS medio THEN increment IS moderado;
+RULE 21 : IF utility IS baixo AND price IS alto AND urgency IS baixo AND time IS alto THEN increment IS baixo;
+RULE 22 : IF utility IS baixo AND price IS alto AND urgency IS medio AND time IS baixo THEN increment IS alto;
+RULE 23 : IF utility IS baixo AND price IS alto AND urgency IS medio AND time IS medio THEN increment IS moderado;
+RULE 24 : IF utility IS baixo AND price IS alto AND urgency IS medio AND time IS alto THEN increment IS baixo;
+RULE 25 : IF utility IS baixo AND price IS alto AND urgency IS alto AND time IS baixo THEN increment IS muito_alto;
+RULE 26 : IF utility IS baixo AND price IS alto AND urgency IS alto AND time IS medio THEN increment IS alto;
+RULE 27 : IF utility IS baixo AND price IS alto AND urgency IS alto AND time IS alto THEN increment IS moderado;
+RULE 28 : IF utility IS medio AND price IS baixo AND urgency IS baixo AND time IS baixo THEN increment IS moderado;
+RULE 29 : IF utility IS medio AND price IS baixo AND urgency IS baixo AND time IS medio THEN increment IS baixo;
+RULE 30 : IF utility IS medio AND price IS baixo AND urgency IS baixo AND time IS alto THEN increment IS baixo;
+RULE 31 : IF utility IS medio AND price IS baixo AND urgency IS medio AND time IS baixo THEN increment IS moderado;
+RULE 32 : IF utility IS medio AND price IS baixo AND urgency IS medio AND time IS medio THEN increment IS baixo;
+RULE 33 : IF utility IS medio AND price IS baixo AND urgency IS medio AND time IS alto THEN increment IS baixo;
+RULE 34 : IF utility IS medio AND price IS baixo AND urgency IS alto AND time IS baixo THEN increment IS alto;
+RULE 35 : IF utility IS medio AND price IS baixo AND urgency IS alto AND time IS medio THEN increment IS moderado;
+RULE 36 : IF utility IS medio AND price IS baixo AND urgency IS alto AND time IS alto THEN increment IS moderado;
+RULE 37 : IF utility IS medio AND price IS medio AND urgency IS baixo AND time IS baixo THEN increment IS moderado;
+RULE 38 : IF utility IS medio AND price IS medio AND urgency IS baixo AND time IS medio THEN increment IS baixo;
+RULE 39 : IF utility IS medio AND price IS medio AND urgency IS baixo AND time IS alto THEN increment IS baixo;
+RULE 40 : IF utility IS medio AND price IS medio AND urgency IS medio AND time IS baixo THEN increment IS alto;
+RULE 41 : IF utility IS medio AND price IS medio AND urgency IS medio AND time IS medio THEN increment IS moderado;
+RULE 42 : IF utility IS medio AND price IS medio AND urgency IS medio AND time IS alto THEN increment IS moderado;
+RULE 43 : IF utility IS medio AND price IS medio AND urgency IS alto AND time IS baixo THEN increment IS muito_alto;
+RULE 44 : IF utility IS medio AND price IS medio AND urgency IS alto AND time IS medio THEN increment IS muito_alto;
+RULE 45 : IF utility IS medio AND price IS medio AND urgency IS alto AND time IS alto THEN increment IS alto;
+RULE 46 : IF utility IS medio AND price IS alto AND urgency IS baixo AND time IS baixo THEN increment IS alto;
+RULE 47 : IF utility IS medio AND price IS alto AND urgency IS baixo AND time IS medio THEN increment IS alto;
+RULE 48 : IF utility IS medio AND price IS alto AND urgency IS baixo AND time IS alto THEN increment IS moderado;
+RULE 49 : IF utility IS medio AND price IS alto AND urgency IS medio AND time IS baixo THEN increment IS muito_alto;
+RULE 50 : IF utility IS medio AND price IS alto AND urgency IS medio AND time IS medio THEN increment IS alto;
+RULE 51 : IF utility IS medio AND price IS alto AND urgency IS medio AND time IS alto THEN increment IS moderado;
+RULE 52 : IF utility IS medio AND price IS alto AND urgency IS alto AND time IS baixo THEN increment IS muito_alto;
+RULE 53 : IF utility IS medio AND price IS alto AND urgency IS alto AND time IS medio THEN increment IS muito_alto;
+RULE 54 : IF utility IS medio AND price IS alto AND urgency IS alto AND time IS alto THEN increment IS alto;
+RULE 55 : IF utility IS alto AND price IS baixo AND urgency IS baixo AND time IS baixo THEN increment IS alto;
+RULE 56 : IF utility IS alto AND price IS baixo AND urgency IS baixo AND time IS medio THEN increment IS moderado;
+RULE 57 : IF utility IS alto AND price IS baixo AND urgency IS baixo AND time IS alto THEN increment IS moderado;
+RULE 58 : IF utility IS alto AND price IS baixo AND urgency IS medio AND time IS baixo THEN increment IS muito_alto;
+RULE 59 : IF utility IS alto AND price IS baixo AND urgency IS medio AND time IS medio THEN increment IS alto;
+RULE 60 : IF utility IS alto AND price IS baixo AND urgency IS medio AND time IS alto THEN increment IS moderado;
+RULE 61 : IF utility IS alto AND price IS baixo AND urgency IS alto AND time IS baixo THEN increment IS muito_alto;
+RULE 62 : IF utility IS alto AND price IS baixo AND urgency IS alto AND time IS medio THEN increment IS muito_alto;
+RULE 63 : IF utility IS alto AND price IS baixo AND urgency IS alto AND time IS alto THEN increment IS alto;
+RULE 64 : IF utility IS alto AND price IS medio AND urgency IS baixo AND time IS baixo THEN increment IS alto;
+RULE 65 : IF utility IS alto AND price IS medio AND urgency IS baixo AND time IS medio THEN increment IS moderado;
+RULE 66 : IF utility IS alto AND price IS medio AND urgency IS baixo AND time IS alto THEN increment IS moderado;
+RULE 67 : IF utility IS alto AND price IS medio AND urgency IS medio AND time IS baixo THEN increment IS alto;
+RULE 68 : IF utility IS alto AND price IS medio AND urgency IS medio AND time IS medio THEN increment IS alto;
+RULE 69 : IF utility IS alto AND price IS medio AND urgency IS medio AND time IS alto THEN increment IS moderado;
+RULE 70 : IF utility IS alto AND price IS medio AND urgency IS alto AND time IS baixo THEN increment IS muito_alto;
+RULE 71 : IF utility IS alto AND price IS medio AND urgency IS alto AND time IS medio THEN increment IS muito_alto;
+RULE 72 : IF utility IS alto AND price IS medio AND urgency IS alto AND time IS alto THEN increment IS alto;
+RULE 73 : IF utility IS alto AND price IS alto AND urgency IS baixo AND time IS baixo THEN increment IS muito_alto;
+RULE 74 : IF utility IS alto AND price IS alto AND urgency IS baixo AND time IS medio THEN increment IS muito_alto;
+RULE 75 : IF utility IS alto AND price IS alto AND urgency IS baixo AND time IS alto THEN increment IS alto;
+RULE 76 : IF utility IS alto AND price IS alto AND urgency IS medio AND time IS baixo THEN increment IS muito_alto;
+RULE 77 : IF utility IS alto AND price IS alto AND urgency IS medio AND time IS medio THEN increment IS muito_alto;
+RULE 78 : IF utility IS alto AND price IS alto AND urgency IS medio AND time IS alto THEN increment IS alto;
+RULE 79 : IF price IS alto AND price IS alto AND urgency IS alto AND time IS baixo THEN increment IS muito_alto;
+RULE 80 : IF price IS alto AND price IS alto AND urgency IS alto AND time IS medio THEN increment IS muito_alto;
+RULE 81 : IF price IS alto AND price IS alto AND urgency IS alto AND time IS alto THEN increment IS muito_alto;
+
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+

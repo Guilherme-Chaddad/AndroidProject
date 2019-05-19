@@ -1,0 +1,79 @@
+
+FUNCTION_BLOCK Negotiation
+
+VAR_INPUT	
+	price : REAL;			
+	urgency : REAL;
+	time : REAL;
+END_VAR
+
+VAR_OUTPUT				
+	reduction : REAL;
+END_VAR
+
+
+FUZZIFY price
+TERM baixo := (300.0, 1.0) (450.0, 0.0) ; 
+TERM medio := (300.0, 0.0) (450.0, 1.0) (600.0, 0.0);
+TERM alto := (450.0, 0.0) (600.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY urgency
+TERM baixo := (0.0, 1.0) (0.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (0.5, 1.0) (1.0, 0.0);
+TERM alto := (0.5, 0.0) (1.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY time
+TERM baixo := (0, 1.0) (10.0, 0.0) ; 
+TERM medio := (0, 0.0) (10.0, 1.0) (20, 0.0);
+TERM alto := (10.0, 0.0) (20.0, 1.0);
+END_FUZZIFY
+
+DEFUZZIFY reduction
+	TERM muito_baixo := (0.0, 1.0) (1.5, 0.0) ; 
+	TERM baixo := (0.5, 0.0) (1.5, 1.0) (2.5, 0.0);
+	TERM moderado := (1.5, 0.0) (2.5, 1.0) (4.0, 0.0) ; 
+	TERM alto := (2.5, 0.0) (4.0, 1.0) (5.0, 0.0);
+	TERM muito_alto := (4.0, 0.0) (5.0, 1.0);
+	METHOD : COG;		
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+
+RULE 1 : IF price IS baixo AND urgency IS baixo AND time IS baixo THEN reduction IS moderado;
+RULE 2 : IF price IS baixo AND urgency IS baixo AND time IS medio THEN reduction IS baixo;
+RULE 3 : IF price IS baixo AND urgency IS baixo AND time IS alto THEN reduction IS muito_baixo;
+RULE 4 : IF price IS baixo AND urgency IS medio AND time IS baixo THEN reduction IS moderado;
+RULE 5 : IF price IS baixo AND urgency IS medio AND time IS medio THEN reduction IS baixo;
+RULE 6 : IF price IS baixo AND urgency IS medio AND time IS alto THEN reduction IS baixo;
+RULE 7 : IF price IS baixo AND urgency IS alto AND time IS baixo THEN reduction IS alto;
+RULE 8 : IF price IS baixo AND urgency IS alto AND time IS medio THEN reduction IS moderado;
+RULE 9 : IF price IS baixo AND urgency IS alto AND time IS alto THEN reduction IS moderado;
+RULE 10 : IF price IS medio AND urgency IS baixo AND time IS baixo THEN reduction IS alto;
+RULE 11 : IF price IS medio AND urgency IS baixo AND time IS medio THEN reduction IS moderado;
+RULE 12 : IF price IS medio AND urgency IS baixo AND time IS alto THEN reduction IS baixo;
+RULE 13 : IF price IS medio AND urgency IS medio AND time IS baixo THEN reduction IS alto;
+RULE 14 : IF price IS medio AND urgency IS medio AND time IS medio THEN reduction IS moderado;
+RULE 15 : IF price IS medio AND urgency IS medio AND time IS alto THEN reduction IS moderado;
+RULE 16 : IF price IS medio AND urgency IS alto AND time IS baixo THEN reduction IS muito_alto;
+RULE 17 : IF price IS medio AND urgency IS alto AND time IS medio THEN reduction IS alto;
+RULE 18 : IF price IS medio AND urgency IS alto AND time IS alto THEN reduction IS alto;
+RULE 19 : IF price IS alto AND urgency IS baixo AND time IS baixo THEN reduction IS alto;
+RULE 20 : IF price IS alto AND urgency IS baixo AND time IS medio THEN reduction IS alto;
+RULE 21 : IF price IS alto AND urgency IS baixo AND time IS alto THEN reduction IS moderado;
+RULE 22 : IF price IS alto AND urgency IS medio AND time IS baixo THEN reduction IS muito_alto;
+RULE 23 : IF price IS alto AND urgency IS medio AND time IS medio THEN reduction IS alto;
+RULE 24 : IF price IS alto AND urgency IS medio AND time IS alto THEN reduction IS alto;
+RULE 25 : IF price IS alto AND urgency IS alto AND time IS baixo THEN reduction IS muito_alto;
+RULE 26 : IF price IS alto AND urgency IS alto AND time IS medio THEN reduction IS muito_alto;
+RULE 27 : IF price IS alto AND urgency IS alto AND time IS alto THEN reduction IS muito_alto;
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+

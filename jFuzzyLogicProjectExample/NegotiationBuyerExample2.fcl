@@ -1,0 +1,79 @@
+
+FUNCTION_BLOCK Negotiation
+
+VAR_INPUT			
+	utility : REAL;
+	price : REAL;
+	urgency : REAL;
+END_VAR
+
+VAR_OUTPUT				
+	increment : REAL;
+END_VAR
+
+FUZZIFY utility
+TERM baixo := (0.0, 1.0) (0.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (0.5, 1.0) (1.0, 0.0);
+TERM alto := (0.5, 0.0) (1.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY price
+TERM baixo := (3000.0, 1.0) (3500.0, 0.0) ; 
+TERM medio := (3000.0, 0.0) (3500.0, 1.0) (4000.0, 0.0);
+TERM alto := (3500.0, 0.0) (4000.0, 1.0);
+END_FUZZIFY
+
+FUZZIFY urgency
+TERM baixo := (0.0, 1.0) (0.5, 0.0) ; 
+TERM medio := (0.0, 0.0) (0.5, 1.0) (1.0, 0.0);
+TERM alto := (0.5, 0.0) (1.0, 1.0);
+END_FUZZIFY
+
+DEFUZZIFY increment
+	TERM muito_baixo := (0.0, 1.0) (1.5, 0.0) ; 
+	TERM baixo := (0.5, 0.0) (1.5, 1.0) (2.5, 0.0);
+	TERM moderado := (1.5, 0.0) (2.5, 1.0) (4.0, 0.0) ; 
+	TERM alto := (2.5, 0.0) (4.0, 1.0) (5.0, 0.0);
+	TERM muito_alto := (4.0, 0.0) (5.0, 1.0);
+	METHOD : COG;		
+	DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;
+	ACT : MIN;
+	ACCU : MAX;
+
+RULE 1 : IF utility IS baixo AND price IS baixo AND urgency IS baixo THEN increment IS muito_baixo;
+RULE 2 : IF utility IS baixo AND price IS baixo AND urgency IS medio THEN increment IS baixo;
+RULE 3 : IF utility IS baixo AND price IS baixo AND urgency IS alto THEN increment IS moderado;
+RULE 4 : IF utility IS baixo AND price IS medio AND urgency IS baixo THEN increment IS baixo;
+RULE 5 : IF utility IS baixo AND price IS medio AND urgency IS medio THEN increment IS baixo;
+RULE 6 : IF utility IS baixo AND price IS medio AND urgency IS alto THEN increment IS moderado;
+RULE 7 : IF utility IS baixo AND price IS alto AND urgency IS baixo THEN increment IS baixo;
+RULE 8 : IF utility IS baixo AND price IS alto AND urgency IS medio THEN increment IS moderado;
+RULE 9 : IF utility IS baixo AND price IS alto AND urgency IS alto THEN increment IS moderado;
+RULE 10 : IF utility IS medio AND price IS baixo AND urgency IS baixo THEN increment IS muito_baixo;
+RULE 11 : IF utility IS medio AND price IS baixo AND urgency IS medio THEN increment IS baixo;
+RULE 12 : IF utility IS medio AND price IS baixo AND urgency IS alto THEN increment IS moderado;
+RULE 13 : IF utility IS medio AND price IS medio AND urgency IS baixo THEN increment IS baixo;
+RULE 14 : IF utility IS medio AND price IS medio AND urgency IS medio THEN increment IS moderado;
+RULE 15 : IF utility IS medio AND price IS medio AND urgency IS alto THEN increment IS alto;
+RULE 16 : IF utility IS medio AND price IS alto AND urgency IS baixo THEN increment IS baixo;
+RULE 17 : IF utility IS medio AND price IS alto AND urgency IS medio THEN increment IS moderado;
+RULE 18 : IF utility IS medio AND price IS alto AND urgency IS alto THEN increment IS alto;
+RULE 19 : IF utility IS alto AND price IS baixo AND urgency IS baixo THEN increment IS moderado;
+RULE 20 : IF utility IS alto AND price IS baixo AND urgency IS medio THEN increment IS alto;
+RULE 21 : IF utility IS alto AND price IS baixo AND urgency IS alto THEN increment IS muito_alto;
+RULE 22 : IF utility IS alto AND price IS medio AND urgency IS baixo THEN increment IS moderado;
+RULE 23 : IF utility IS alto AND price IS medio AND urgency IS medio THEN increment IS alto;
+RULE 24 : IF utility IS alto AND price IS medio AND urgency IS alto THEN increment IS muito_alto;
+RULE 25 : IF utility IS alto AND price IS alto AND urgency IS baixo THEN increment IS moderado;
+RULE 26 : IF utility IS alto AND price IS alto AND urgency IS medio THEN increment IS alto;
+RULE 27 : IF price IS alto AND price IS alto AND urgency IS alto THEN increment IS muito_alto;
+
+	
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
