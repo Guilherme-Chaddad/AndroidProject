@@ -8,4 +8,6 @@
 
     <!-- Smartwatch texts-->
     <string name="swTitle">Informações do Smartwatch</string>
+    <string name="swTurnOnBluetooth">Habilitar Bluetooth</string>
+    <string name="swUpdateInfo">Atualizar Info</string>
 </resources>
