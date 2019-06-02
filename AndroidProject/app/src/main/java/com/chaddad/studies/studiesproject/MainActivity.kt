@@ -12,8 +12,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import android.content.Intent
 
-class MainActivity : AppCompatActivity() {
+
+
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
 
     private var clickedBackTwice : Boolean = false
 
@@ -30,20 +33,28 @@ class MainActivity : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.ic_menu_white)
         }
 
-        val drawerLayout : DrawerLayout = findViewById(R.id.drawerLayout)
-
         val navigationView: NavigationView = findViewById(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            // set item as selected to persist highlight
-            menuItem.isChecked = true
-            // close drawer when item is tapped
-            drawerLayout.closeDrawers()
+        navigationView.setNavigationItemSelectedListener(this)
+    }
 
-            // Add code here to update the UI based on the item selected
-            // For example, swap UI fragments here
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
 
-            true
+        //to prevent current item select over and over
+        if (menuItem.isChecked()){
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return false;
         }
+
+        when ( menuItem.itemId ) {
+            R.id.master_activities_menu -> {
+
+            }
+            R.id.watch_resources_menu -> {
+                startActivity(Intent(applicationContext, SmartWatchActivity::class.java))
+            }
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

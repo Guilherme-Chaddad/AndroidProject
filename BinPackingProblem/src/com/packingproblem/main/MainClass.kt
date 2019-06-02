@@ -6,11 +6,11 @@ import com.packingproblem.util.BagUtil
 var sumFitness = 0.0
 const val probabilityCrossover: Double = 80.0
 const val probabilityMutation: Double = 5.0
-const val populationSize: Int = 10
+const val populationSize: Int = 50
 const val initialBagSize: Int = 0
 const val reproductionSize: Int = populationSize
 const val executionByGeneration = true
-const val executionUsingPenalization = false
+const val executionUsingPenalization = true
 const val printInfo = false
 const val printMapInfo = true
 

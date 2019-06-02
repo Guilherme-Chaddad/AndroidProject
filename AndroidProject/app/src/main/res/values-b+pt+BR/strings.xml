@@ -3,6 +3,9 @@
     <string name="exit">Sair</string>
     <string name="doubleClickToExitMessage">Por favor clique VOLTAR novamente para sair do aplicativo</string>
     <string name="watch_menu">Funções Smartwatch</string>
-    <string name="master_menu">Atividades do Mestrado</string>
+    <string name="master_menu">Exercícios de IA</string>
     <string name="home">Início</string>
+
+    <!-- Smartwatch texts-->
+    <string name="swTitle">Informações do Smartwatch</string>
 </resources>

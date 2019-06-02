@@ -3,6 +3,9 @@
     <string name="exit">Exit</string>
     <string name="doubleClickToExitMessage">Please click BACK again to close the application</string>
     <string name="watch_menu">Smartwatch Features</string>
-    <string name="master_menu">Master\'s Degree Activities</string>
+    <string name="master_menu">AI Exercises</string>
     <string name="home">Home</string>
+
+    <!-- Smartwatch texts-->
+    <string name="swTitle">Smartwach Information</string>
 </resources>

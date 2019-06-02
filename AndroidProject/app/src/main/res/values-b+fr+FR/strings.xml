@@ -4,6 +4,9 @@
     <string name="exit">Sortie</string>
     <string name="doubleClickToExitMessage">Veuillez cliquer à nouveau sur RETOUR pour fermer l\'application.</string>
     <string name="watch_menu">Smartwatch Fonctionnalité</string>
-    <string name="master_menu">Activités de maîtrise</string>
+    <string name="master_menu">Exercices d\'IA</string>
     <string name="home">Home</string>
+
+    <!-- Smartwatch texts-->
+    <string name="swTitle">Smartwach Information</string>
 </resources>
